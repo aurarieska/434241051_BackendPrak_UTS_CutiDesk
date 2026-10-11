@@ -627,25 +627,6 @@ Authorization: Bearer <access_token>
 
 ---
 
-#### `DELETE /api/users/:id`
-
-Nonaktifkan user (soft delete). **Permission: `user:delete`** (admin).
-
-**Header:**
-```
-Authorization: Bearer <access_token>
-```
-
-**Response Sukses (200):**
-```json
-{
-  "success": true,
-  "message": "User berhasil dihapus"
-}
-```
-
----
-
 ### 4. Manajemen Jenis Cuti
 
 #### `GET /api/jenis-cuti`
@@ -1094,18 +1075,17 @@ Authorization: Bearer <access_token>
 | 10 | PUT    | `/api/users/:id`                    | `user:update`        | admin, hr             |
 | 11 | PATCH  | `/api/users/:id`                    | `user:update`        | admin, hr             |
 | 12 | PATCH  | `/api/users/:id/role`               | `user:update`        | admin, hr             |
-| 13 | DELETE | `/api/users/:id`                    | `user:delete`        | admin                 |
-| 14 | GET    | `/api/jenis-cuti`                   | `jenis_cuti:read`    | admin, hr, employee   |
-| 15 | GET    | `/api/jenis-cuti/:id`               | `jenis_cuti:read`    | admin, hr, employee   |
-| 16 | POST   | `/api/jenis-cuti`                   | `jenis_cuti:create`  | admin, hr             |
-| 17 | PUT    | `/api/jenis-cuti/:id`               | `jenis_cuti:update`  | admin, hr             |
-| 18 | PATCH  | `/api/jenis-cuti/:id`               | `jenis_cuti:update`  | admin, hr             |
-| 19 | DELETE | `/api/jenis-cuti/:id`               | `jenis_cuti:delete`  | admin, hr             |
-| 20 | POST   | `/api/pengajuan-cuti`               | `cuti:create`        | employee              |
-| 21 | GET    | `/api/pengajuan-cuti`               | `cuti:read`          | admin, hr, employee   |
-| 22 | GET    | `/api/pengajuan-cuti/:id`           | `cuti:read`          | admin, hr, employee   |
-| 23 | PATCH  | `/api/pengajuan-cuti/:id/status`    | `cuti:approve`       | admin, hr             |
-| 24 | GET    | `/api/pengajuan-cuti/:id/riwayat`   | `riwayat:read`       | admin, hr, employee   |
+| 13 | GET    | `/api/jenis-cuti`                   | `jenis_cuti:read`    | admin, hr, employee   |
+| 14 | GET    | `/api/jenis-cuti/:id`               | `jenis_cuti:read`    | admin, hr, employee   |
+| 15 | POST   | `/api/jenis-cuti`                   | `jenis_cuti:create`  | admin, hr             |
+| 16 | PUT    | `/api/jenis-cuti/:id`               | `jenis_cuti:update`  | admin, hr             |
+| 17 | PATCH  | `/api/jenis-cuti/:id`               | `jenis_cuti:update`  | admin, hr             |
+| 18 | DELETE | `/api/jenis-cuti/:id`               | `jenis_cuti:delete`  | admin, hr             |
+| 19 | POST   | `/api/pengajuan-cuti`               | `cuti:create`        | employee              |
+| 20 | GET    | `/api/pengajuan-cuti`               | `cuti:read`          | admin, hr, employee   |
+| 21 | GET    | `/api/pengajuan-cuti/:id`           | `cuti:read`          | admin, hr, employee   |
+| 22 | PATCH  | `/api/pengajuan-cuti/:id/status`    | `cuti:approve`       | admin, hr             |
+| 23 | GET    | `/api/pengajuan-cuti/:id/riwayat`   | `riwayat:read`       | admin, hr, employee   |
 
 ---
 

@@ -4,14 +4,15 @@ import "time"
 
 // User adalah entitas pengguna di database
 type User struct {
-	ID           int       `json:"id"`
-	Username     string    `json:"username"`
-	Email        string    `json:"email"`
-	Password     string    `json:"-"` // tidak pernah keluar sebagai JSON
-	NamaLengkap  string    `json:"nama_lengkap"`
-	Role         string    `json:"role"`
-	IsActive     bool      `json:"is_active"`
-	CreatedAt    time.Time `json:"created_at"`
+	ID          int       `json:"id"`
+	Username    string    `json:"username"`
+	Email       string    `json:"email"`
+	Password    string    `json:"-"`
+	NamaLengkap string   `json:"nama_lengkap"`
+	Role        string    `json:"role"`
+	IsActive    bool      `json:"is_active"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
 }
 
 // CreateUserRequest adalah body untuk POST /users (admin membuat user)

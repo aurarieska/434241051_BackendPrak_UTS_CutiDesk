@@ -9,6 +9,7 @@ type JenisCuti struct {
 	Deskripsi *string   `json:"deskripsi"` // nullable
 	IsActive  bool      `json:"is_active"`
 	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
 }
 
 // CreateJenisCutiRequest adalah body untuk POST /jenis-cuti

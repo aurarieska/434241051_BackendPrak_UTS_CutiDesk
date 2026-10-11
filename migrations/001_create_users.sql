@@ -1,13 +1,15 @@
 -- Migration 001: Tabel users
 CREATE TABLE IF NOT EXISTS users (
-    id            SERIAL       PRIMARY KEY,
-    username      VARCHAR(50)  NOT NULL,
-    email         VARCHAR(255) NOT NULL,
+    id            BIGSERIAL    PRIMARY KEY,
+    username      VARCHAR(50)  NOT NULL UNIQUE,
+    email         VARCHAR(100) NOT NULL UNIQUE,
     password      VARCHAR(255) NOT NULL,
-    nama_lengkap  VARCHAR(150) NOT NULL,
-    role          VARCHAR(20)  NOT NULL DEFAULT 'employee',
+    nama_lengkap  VARCHAR(100) NOT NULL,
+    role          VARCHAR(50)  NOT NULL DEFAULT 'employee',
+    role_id       BIGINT       NOT NULL DEFAULT 3,
     is_active     BOOLEAN      NOT NULL DEFAULT TRUE,
-    created_at    TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+    created_at    TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+    updated_at    TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
 
 -- Username unik tanpa membedakan huruf besar/kecil

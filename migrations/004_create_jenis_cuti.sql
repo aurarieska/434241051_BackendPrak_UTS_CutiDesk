@@ -1,10 +1,10 @@
 -- Migration 004: Tabel jenis_cuti
 CREATE TABLE IF NOT EXISTS jenis_cuti (
-    id         SERIAL       PRIMARY KEY,
-    nama       VARCHAR(100) NOT NULL,
-    deskripsi  TEXT,
-    is_active  BOOLEAN      NOT NULL DEFAULT TRUE,
-    created_at TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+    id          BIGSERIAL    PRIMARY KEY,
+    nama        VARCHAR(100) NOT NULL UNIQUE,
+    deskripsi   TEXT         NOT NULL DEFAULT '',
+    created_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+    updated_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
 
 -- Nama jenis cuti unik tanpa membedakan huruf besar/kecil

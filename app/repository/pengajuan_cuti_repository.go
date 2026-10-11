@@ -47,7 +47,7 @@ func (r *pengajuanCutiRepositoryPG) Buat(ctx context.Context, userID int, req mo
 	query := `
 		INSERT INTO pengajuan_cuti (user_id, jenis_cuti_id, tanggal_mulai, tanggal_selesai, alasan)
 		VALUES ($1, $2, $3, $4, $5)
-		RETURNING id, user_id, jenis_cuti_id, tanggal_mulai, tanggal_selesai,
+		RETURNING id, user_id, jenis_cuti_id, tanggal_mulai::TEXT, tanggal_selesai::TEXT,
 		          alasan, status, created_at, updated_at
 	`
 	var pc model.PengajuanCuti
@@ -65,7 +65,7 @@ func (r *pengajuanCutiRepositoryPG) Buat(ctx context.Context, userID int, req mo
 
 func (r *pengajuanCutiRepositoryPG) CariByID(ctx context.Context, id int) (*model.PengajuanCuti, error) {
 	query := `
-		SELECT pc.id, pc.user_id, pc.jenis_cuti_id, pc.tanggal_mulai, pc.tanggal_selesai,
+		SELECT pc.id, pc.user_id, pc.jenis_cuti_id, pc.tanggal_mulai::TEXT, pc.tanggal_selesai::TEXT,
 		       pc.alasan, pc.status, pc.created_at, pc.updated_at,
 		       u.nama_lengkap AS nama_pengaju,
 		       jc.nama AS nama_jenis_cuti
@@ -133,7 +133,7 @@ func (r *pengajuanCutiRepositoryPG) Daftar(ctx context.Context, limit int, curso
 	}
 
 	query := `
-		SELECT pc.id, pc.user_id, pc.jenis_cuti_id, pc.tanggal_mulai, pc.tanggal_selesai,
+		SELECT pc.id, pc.user_id, pc.jenis_cuti_id, pc.tanggal_mulai::TEXT, pc.tanggal_selesai::TEXT,
 		       pc.alasan, pc.status, pc.created_at, pc.updated_at,
 		       u.nama_lengkap AS nama_pengaju,
 		       jc.nama AS nama_jenis_cuti
@@ -181,7 +181,7 @@ func (r *pengajuanCutiRepositoryPG) UbahStatus(ctx context.Context, id int, stat
 		SET status     = $1,
 		    updated_at = NOW()
 		WHERE id = $2
-		RETURNING id, user_id, jenis_cuti_id, tanggal_mulai, tanggal_selesai,
+		RETURNING id, user_id, jenis_cuti_id, tanggal_mulai::TEXT, tanggal_selesai::TEXT,
 		          alasan, status, created_at, updated_at
 	`
 	var pc model.PengajuanCuti

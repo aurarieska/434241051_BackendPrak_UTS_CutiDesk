@@ -1,79 +1,90 @@
--- Migration 003: Tabel RBAC (roles, permissions, role_permissions)
+-- =====================================================
+-- Migration 003: RBAC - Roles & Permissions
+-- =====================================================
 
+-- Tabel roles
 CREATE TABLE IF NOT EXISTS roles (
-    name        VARCHAR(20)  PRIMARY KEY,
-    description VARCHAR(150) NOT NULL,
-    created_at  TIMESTAMPTZ  DEFAULT NOW()
+    id          BIGSERIAL    PRIMARY KEY,
+    name        VARCHAR(50)  NOT NULL UNIQUE,
+    description VARCHAR(255),
+    created_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
 
+-- Tabel permissions
 CREATE TABLE IF NOT EXISTS permissions (
-    name        VARCHAR(50)  PRIMARY KEY,
-    description VARCHAR(150) NOT NULL
+    id          BIGSERIAL    PRIMARY KEY,
+    name        VARCHAR(100) NOT NULL UNIQUE,
+    description VARCHAR(255),
+    created_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
 
+-- Tabel pivot role_permissions
 CREATE TABLE IF NOT EXISTS role_permissions (
-    role_name       VARCHAR(20) REFERENCES roles(name) ON DELETE CASCADE,
-    permission_name VARCHAR(50) REFERENCES permissions(name) ON DELETE CASCADE,
-    PRIMARY KEY (role_name, permission_name)
+    role_id       BIGINT NOT NULL REFERENCES roles(id) ON DELETE CASCADE,
+    permission_id BIGINT NOT NULL REFERENCES permissions(id) ON DELETE CASCADE,
+    PRIMARY KEY (role_id, permission_id)
 );
 
--- Tambahkan FK dari users.role ke roles.name
-ALTER TABLE users
-    ADD CONSTRAINT fk_users_role FOREIGN KEY (role) REFERENCES roles(name);
-
--- Seed: tiga role utama
+-- =====================================================
+-- Seed 3 roles
+-- =====================================================
 INSERT INTO roles (name, description) VALUES
     ('admin',    'Administrator sistem'),
     ('hr',       'Human Resources'),
-    ('employee', 'Karyawan')
-ON CONFLICT DO NOTHING;
+    ('employee', 'Karyawan biasa')
+ON CONFLICT (name) DO NOTHING;
 
--- Seed: seluruh permission
+-- =====================================================
+-- Seed 14 permissions (HARUS SAMA dengan config/app.go)
+-- =====================================================
 INSERT INTO permissions (name, description) VALUES
-    ('user:list',         'Melihat daftar seluruh user'),
-    ('user:read:any',     'Melihat data user mana pun'),
     ('user:create',       'Membuat user baru'),
-    ('user:update:any',   'Mengubah data user mana pun'),
-    ('user:delete',       'Menghapus user'),
-    ('role:assign',       'Mengubah role user lain'),
-    ('jenis_cuti:list',   'Melihat daftar jenis cuti'),
-    ('jenis_cuti:read',   'Melihat detail satu jenis cuti'),
-    ('jenis_cuti:create', 'Menambah jenis cuti baru'),
+    ('user:read',         'Melihat daftar dan detail user'),
+    ('user:update',       'Mengubah data user'),
+    ('user:delete',       'Menghapus/menonaktifkan user'),
+    ('jenis_cuti:create', 'Membuat jenis cuti baru'),
+    ('jenis_cuti:read',   'Melihat daftar jenis cuti'),
     ('jenis_cuti:update', 'Mengubah jenis cuti'),
+    ('jenis_cuti:delete', 'Menghapus jenis cuti'),
     ('cuti:create',       'Mengajukan cuti'),
-    ('cuti:list:any',     'Melihat seluruh pengajuan cuti semua user'),
-    ('cuti:read:any',     'Melihat detail pengajuan cuti milik user lain'),
-    ('cuti:approve',      'Menyetujui atau menolak pengajuan cuti')
+    ('cuti:read',         'Melihat daftar pengajuan cuti'),
+    ('cuti:approve',      'Menyetujui atau menolak cuti'),
+    ('riwayat:read',      'Melihat riwayat cuti'),
+    ('laporan:read',      'Melihat laporan'),
+    ('profil:update',     'Mengubah profil sendiri')
+ON CONFLICT (name) DO NOTHING;
+
+-- =====================================================
+-- Assign permissions ke roles
+-- =====================================================
+
+-- Admin: semua 14 permissions
+INSERT INTO role_permissions (role_id, permission_id)
+SELECT r.id, p.id
+FROM roles r, permissions p
+WHERE r.name = 'admin'
 ON CONFLICT DO NOTHING;
 
--- Pemetaan: admin
-INSERT INTO role_permissions (role_name, permission_name) VALUES
-    ('admin', 'user:list'),
-    ('admin', 'user:read:any'),
-    ('admin', 'user:create'),
-    ('admin', 'user:update:any'),
-    ('admin', 'user:delete'),
-    ('admin', 'role:assign'),
-    ('admin', 'jenis_cuti:list'),
-    ('admin', 'jenis_cuti:read'),
-    ('admin', 'jenis_cuti:create'),
-    ('admin', 'jenis_cuti:update'),
-    ('admin', 'cuti:list:any'),
-    ('admin', 'cuti:read:any')
+-- HR: 12 permissions (semua kecuali user:delete dan cuti:create)
+INSERT INTO role_permissions (role_id, permission_id)
+SELECT r.id, p.id
+FROM roles r, permissions p
+WHERE r.name = 'hr'
+  AND p.name IN (
+    'user:create', 'user:read', 'user:update',
+    'jenis_cuti:create', 'jenis_cuti:read', 'jenis_cuti:update', 'jenis_cuti:delete',
+    'cuti:read', 'cuti:approve',
+    'riwayat:read', 'laporan:read', 'profil:update'
+  )
 ON CONFLICT DO NOTHING;
 
--- Pemetaan: hr
-INSERT INTO role_permissions (role_name, permission_name) VALUES
-    ('hr', 'jenis_cuti:list'),
-    ('hr', 'jenis_cuti:read'),
-    ('hr', 'cuti:list:any'),
-    ('hr', 'cuti:read:any'),
-    ('hr', 'cuti:approve')
-ON CONFLICT DO NOTHING;
-
--- Pemetaan: employee
-INSERT INTO role_permissions (role_name, permission_name) VALUES
-    ('employee', 'jenis_cuti:list'),
-    ('employee', 'jenis_cuti:read'),
-    ('employee', 'cuti:create')
+-- Employee: 4 permissions
+INSERT INTO role_permissions (role_id, permission_id)
+SELECT r.id, p.id
+FROM roles r, permissions p
+WHERE r.name = 'employee'
+  AND p.name IN (
+    'cuti:create', 'cuti:read',
+    'riwayat:read', 'profil:update'
+  )
 ON CONFLICT DO NOTHING;

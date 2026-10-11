@@ -43,7 +43,7 @@ type TokenPair struct {
 
 // MeResponse adalah response untuk GET /auth/me
 type MeResponse struct {
-	User        User     `json:"user"`
+	User        AuthUser     `json:"user"`
 	Permissions []string `json:"permissions"`
 }
 
